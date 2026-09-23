@@ -86,18 +86,22 @@ jobs:
           TARGET_CPR: ${{ vars.TARGET_CPR || '2.00' }}
           CURRENCY: ${{ vars.CURRENCY || 'USD' }}
         run: |
+          mkdir -p data public/data
           python build_dashboard.py \
             --target-cpc "$TARGET_CPC" \
             --target-cpr "$TARGET_CPR" \
             --currency "$CURRENCY" \
             --out public/index.html
-          cp -r data public/data
+          # Copy any CSVs across. A brand-new account has none yet, and that
+          # is fine — the dashboard says so instead of failing.
+          cp -r data/. public/data/ 2>/dev/null || true
+          echo "CSV files pulled: $(ls -1 data/*.csv 2>/dev/null | wc -l)"
 
       - name: Commit the new data and dashboard
         run: |
           git config user.name  "meta-ads-bot"
           git config user.email "actions@github.com"
-          git add -A data public/index.html
+          git add -A
           git diff --staged --quiet || git commit -m "Daily pull $(date -u +%Y-%m-%d)"
           git push
 
@@ -124,4 +128,3 @@ jobs:
       - name: Publish to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
