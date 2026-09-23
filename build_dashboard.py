@@ -370,18 +370,31 @@ def build(cfg):
     if not all_rows:
         return page_shell(
             kicker=f"{date.today():%a %d %b %Y}".upper() + " · META ADS — DAILY BRIEF",
-            headline="No data pulled yet.",
-            dateline="Run the puller first, then rebuild this page.",
-            body=f"""
+            headline="Connected and running. Meta has not reported any delivery yet.",
+            dateline="This page rebuilds itself every morning at 06:00. "
+                     "The moment your ads serve, it fills in on its own.",
+            body="""
 <section>
   <div class="na">
-    <strong>The <code>data/</code> folder has no CSVs.</strong>
+    <strong>Nothing is broken.</strong> The pull ran, reached your ad account and came
+    back with zero rows. That means Meta has no delivery to report yet — not that
+    the connection failed.
     <ul>
-      <li>Run <code>python meta_ads.py --days 30</code></li>
-      <li>If it says <em>0 rows</em>, your ads have not spent or served yet — that is normal for a new campaign.</li>
-      <li>Meta also delays reporting by 15–30 minutes.</li>
-      <li>Once rows appear, run <code>python build_dashboard.py</code> again.</li>
+      <li>A campaign that went live today usually shows nothing for several hours.</li>
+      <li>Meta lags reporting by 15–30 minutes even once it starts.</li>
+      <li>An ad still in review has not served at all yet.</li>
+      <li>A paused campaign, or one with a spend limit already hit, reports nothing.</li>
     </ul>
+    <p style="margin:14px 0 0">Worth a check in Ads Manager: is the campaign
+    <strong>Active</strong> rather than <em>In review</em> or <em>Off</em>, and does the
+    account have a valid payment method? Those are the two things that keep a
+    correctly built campaign from ever serving.</p>
+  </div>
+
+  <div class="flag-box">
+    <strong>Nothing for you to run.</strong> This page is rebuilt by GitHub every morning
+    at 06:00 Lagos time. To force it sooner: your repo → <strong>Actions</strong> →
+    <strong>Meta Ads — daily brief</strong> → <strong>Run workflow</strong>.
   </div>
 </section>""")
 
