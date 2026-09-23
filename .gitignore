@@ -1,0 +1,12 @@
+# Secrets — never commit these.
+.env
+
+# Local junk
+__pycache__/
+*.pyc
+.venv/
+venv/
+.DS_Store
+
+# data/ and public/ ARE committed on purpose — that is how the
+# dashboard and its history survive between runs.
