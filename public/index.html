@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>The Morning Brief — Meta Ads</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#16243D; --paper:#F6F3EC; --paper-raised:#FDFCF8; --line:#D9D3C4; --line-strong:#B7AF9B;
+  --gold:#9A6A17; --green:#2C6B4B; --green-bg:#E8EFE7; --red:#A23B2E; --red-bg:#F5E7E3;
+  --amber-bg:#F3ECDA; --slate:#5B6472; --text:#201C15; --bar:#5E6E8C; --bar-soft:#C9CFDB;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ink:#EDE7D8; --paper:#14120F; --paper-raised:#1C1913; --line:#3A362C; --line-strong:#504A3C;
+    --gold:#D3A24C; --green:#6FAE8B; --green-bg:#1C2A22; --red:#E08573; --red-bg:#2E1F1C;
+    --amber-bg:#2A2316; --slate:#A79F8C; --text:#EDE7D8; --bar:#9FB0CF; --bar-soft:#3B4252;
+  }
+}
+:root[data-theme="dark"] {
+  --ink:#EDE7D8; --paper:#14120F; --paper-raised:#1C1913; --line:#3A362C; --line-strong:#504A3C;
+  --gold:#D3A24C; --green:#6FAE8B; --green-bg:#1C2A22; --red:#E08573; --red-bg:#2E1F1C;
+  --amber-bg:#2A2316; --slate:#A79F8C; --text:#EDE7D8; --bar:#9FB0CF; --bar-soft:#3B4252;
+}
+* { box-sizing: border-box; }
+body { margin:0; background:var(--paper); color:var(--text);
+  font-family:'IBM Plex Sans',system-ui,-apple-system,sans-serif; font-size:16px; line-height:1.5; }
+.wrap { max-width:980px; margin:0 auto; padding:0 24px 80px; }
+@media (max-width:640px){ .wrap{ padding:0 16px 60px; } }
+
+.masthead { padding:48px 8px 28px; border-bottom:3px solid var(--ink); text-align:center; }
+.kicker { font-family:'IBM Plex Mono',ui-monospace,monospace; font-size:13px; letter-spacing:.04em; color:var(--slate); margin-bottom:10px; }
+.masthead h1 { font-family:'Source Serif 4',Georgia,serif; font-weight:700; font-size:clamp(1.7rem,4.4vw,2.6rem);
+  margin:0 0 8px; color:var(--ink); letter-spacing:-.01em; text-wrap:balance; }
+.dateline { font-size:14px; color:var(--slate); }
+.dateline strong { color:var(--text); }
+.toc { display:flex; flex-wrap:wrap; justify-content:center; gap:6px 16px; margin-top:16px; font-size:13px; }
+.toc a { color:var(--slate); text-decoration:none; border-bottom:1px solid var(--line-strong); }
+.toc a:hover,.toc a:focus-visible { color:var(--ink); border-color:var(--ink); outline:none; }
+
+.ledger { display:grid; grid-template-columns:repeat(4,1fr); border-bottom:1px solid var(--line); margin-top:8px; }
+.ledger .cell { padding:22px 18px; border-left:1px solid var(--line); }
+.ledger .cell:first-child { border-left:none; }
+.label { font-size:12.5px; color:var(--slate); margin-bottom:6px; }
+.value { font-family:'Source Serif 4',Georgia,serif; font-size:1.7rem; font-weight:600; color:var(--ink); font-variant-numeric:tabular-nums; }
+.value .u { font-size:1rem; }
+.sub { font-size:12.5px; color:var(--slate); margin-top:4px; }
+.sub.good{color:var(--green)} .sub.warn{color:var(--gold)} .sub.bad{color:var(--red)}
+@media (max-width:700px){ .ledger{grid-template-columns:repeat(2,1fr)}
+  .ledger .cell:nth-child(3){border-left:none} .ledger .cell:nth-child(n+3){border-top:1px solid var(--line)} }
+
+section { padding:44px 0; border-bottom:1px solid var(--line); scroll-margin-top:12px; }
+section:last-of-type { border-bottom:none; }
+.section-head { display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:6px; }
+.section-head h2 { font-family:'Source Serif 4',Georgia,serif; font-weight:600; font-size:1.5rem; margin:0; color:var(--ink); text-wrap:balance; }
+.section-head .note { font-size:13px; color:var(--slate); }
+.snum { font-family:'IBM Plex Mono',ui-monospace,monospace; font-size:13px; color:var(--slate); margin-right:8px; font-weight:400; }
+.section-intro { color:var(--slate); font-size:14.5px; margin:4px 0 22px; max-width:66ch; }
+h3 { font-family:'Source Serif 4',Georgia,serif; font-size:1.1rem; font-weight:600; color:var(--ink); margin:28px 0 10px; }
+
+.chart-title { font-size:13px; color:var(--slate); margin-bottom:10px; }
+.hrow { display:grid; grid-template-columns:200px 1fr 100px; align-items:center; gap:12px; font-size:13.5px; margin-bottom:9px; }
+.hrow .lbl { color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.hrow .val { text-align:right; font-family:'IBM Plex Mono',ui-monospace,monospace; font-variant-numeric:tabular-nums; }
+.track { position:relative; height:12px; background:var(--line); border-radius:0 4px 4px 0; }
+.fill { position:absolute; left:0; top:0; bottom:0; border-radius:0 4px 4px 0; background:var(--bar); }
+.fill.green{background:var(--green)} .fill.gold{background:var(--gold)} .fill.red{background:var(--red)} .fill.soft{background:var(--bar-soft)}
+@media (max-width:640px){ .hrow{grid-template-columns:120px 1fr 78px; gap:8px; font-size:12.5px} }
+.two { display:grid; grid-template-columns:1fr 1fr; gap:28px 40px; }
+@media (max-width:760px){ .two{grid-template-columns:1fr} }
+.axis-note { font-size:11.5px; color:var(--slate); margin-top:6px; }
+
+.cols { display:flex; align-items:flex-end; gap:2px; height:150px; border-bottom:1px solid var(--line-strong); position:relative; padding-top:4px; }
+.cols .c { flex:1 1 0; background:var(--bar-soft); border-radius:2px 2px 0 0; min-width:0; }
+.cols .c.post { background:var(--bar); }
+.cols .c.pre { background:var(--bar-soft); }
+.cols .avg { position:absolute; left:0; right:0; border-top:1px dashed var(--line-strong); }
+.cols .avg span { position:absolute; right:0; top:-16px; font-size:10.5px; font-family:'IBM Plex Mono',ui-monospace,monospace;
+  color:var(--slate); background:var(--paper); padding:0 3px; }
+.colaxis { display:flex; justify-content:space-between; font-size:11px; color:var(--slate);
+  font-family:'IBM Plex Mono',ui-monospace,monospace; margin-top:6px; }
+
+.table-scroll { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; font-size:14px; }
+th { text-align:left; font-weight:500; color:var(--slate); font-size:12.5px; padding:0 10px 10px 0;
+  border-bottom:1px solid var(--line-strong); white-space:nowrap; }
+td { padding:11px 10px 11px 0; border-bottom:1px solid var(--line); vertical-align:top; }
+tr:last-child td { border-bottom:none; }
+td.num,th.num { text-align:right; font-family:'IBM Plex Mono',ui-monospace,monospace; font-variant-numeric:tabular-nums; white-space:nowrap; }
+td .why { display:block; font-size:12.5px; color:var(--slate); margin-top:3px;
+  font-family:'IBM Plex Sans',system-ui,sans-serif; white-space:normal; }
+.row-flag { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:8px; position:relative; top:-1px; }
+.row-flag.green{background:var(--green)} .row-flag.gold{background:var(--gold)}
+.row-flag.red{background:var(--red)} .row-flag.slate{background:var(--line-strong)}
+.tag,.dx { display:inline-block; font-size:11px; font-family:'IBM Plex Mono',ui-monospace,monospace;
+  padding:2px 7px; border-radius:3px; white-space:nowrap; }
+.tag.winner,.dx.green { background:var(--green-bg); color:var(--green); }
+.tag.waste,.dx.red { background:var(--red-bg); color:var(--red); }
+.tag.watch,.dx.gold { background:var(--amber-bg); color:var(--gold); }
+.dx.slate,.tag.est { background:transparent; color:var(--slate); border:1px solid var(--line-strong); }
+.wide-table { min-width:760px; }
+
+.flag-box { border-left:3px solid var(--gold); background:var(--amber-bg); padding:16px 20px; margin-top:16px; font-size:14px; }
+.flag-box.red { border-left-color:var(--red); background:var(--red-bg); }
+.flag-box.green { border-left-color:var(--green); background:var(--green-bg); }
+.flag-box strong { color:var(--ink); }
+
+.na { border:1px dashed var(--line-strong); padding:22px; font-size:14.5px; color:var(--slate); }
+.na strong { color:var(--ink); }
+.na ul { margin:10px 0 0; padding-left:20px; }
+.na li { margin-bottom:6px; }
+
+.plan { display:grid; gap:0; }
+.p { display:grid; grid-template-columns:56px 1fr; gap:16px; padding:18px 0; border-top:1px solid var(--line); }
+.p:first-child { border-top:none; }
+.pbadge { font-family:'IBM Plex Mono',ui-monospace,monospace; font-weight:500; font-size:14px; height:30px;
+  display:grid; place-items:center; border-radius:3px; }
+.pbadge.p0{background:var(--red-bg);color:var(--red)} .pbadge.p1{background:var(--amber-bg);color:var(--gold)}
+.pbadge.p2{background:var(--green-bg);color:var(--green)} .pbadge.p3{border:1px solid var(--line-strong);color:var(--slate)}
+.p h4 { margin:0 0 8px; font-size:15.5px; color:var(--ink); font-weight:600; }
+.p p { margin:0; font-size:13.5px; color:var(--slate); }
+.p code { font-family:'IBM Plex Mono',ui-monospace,monospace; font-size:12px; background:var(--paper-raised);
+  border:1px solid var(--line); padding:1px 5px; border-radius:3px; word-break:break-word; }
+@media (max-width:560px){ .p{grid-template-columns:1fr;gap:8px} .pbadge{width:48px} }
+
+.fixfirst { display:grid; grid-template-columns:auto 1fr; gap:16px; align-items:center; margin:22px 0 0;
+  padding:18px 22px; background:var(--amber-bg); border-left:4px solid var(--gold); color:var(--text); font-size:14.5px; }
+.fixfirst.green { background:var(--green-bg); border-left-color:var(--green); }
+.fixfirst.red { background:var(--red-bg); border-left-color:var(--red); }
+.ff-k { font-family:'IBM Plex Mono',ui-monospace,monospace; font-size:12px; letter-spacing:.06em; color:var(--gold); font-weight:500; }
+.fixfirst.green .ff-k { color:var(--green); } .fixfirst.red .ff-k { color:var(--red); }
+.fixfirst strong { color:var(--ink); }
+@media (max-width:640px){ .fixfirst{grid-template-columns:1fr;gap:6px} }
+
+footer { padding:32px 0 0; font-size:12.5px; color:var(--slate); display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; }
+code { font-family:'IBM Plex Mono',ui-monospace,monospace; font-size:.85em; }
+</style>
+</head><body>
+<div class="wrap">
+  <header class="masthead">
+    <div class="kicker">WED 23 SEP 2026 · META ADS — DAILY BRIEF</div>
+    <h1>No data pulled yet.</h1>
+    <div class="dateline">Run the puller first, then rebuild this page.</div>
+    
+  </header>
+
+
+<section>
+  <div class="na">
+    <strong>The <code>data/</code> folder has no CSVs.</strong>
+    <ul>
+      <li>Run <code>python meta_ads.py --days 30</code></li>
+      <li>If it says <em>0 rows</em>, your ads have not spent or served yet — that is normal for a new campaign.</li>
+      <li>Meta also delays reporting by 15–30 minutes.</li>
+      <li>Once rows appear, run <code>python build_dashboard.py</code> again.</li>
+    </ul>
+  </div>
+</section>
+</div></body></html>
