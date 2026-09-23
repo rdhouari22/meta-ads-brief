@@ -1,1 +1,127 @@
+name: Meta Ads — daily brief
+
+on:
+  schedule:
+    # 06:00 Lagos time (UTC+1) = 05:00 UTC, every day
+    - cron: "0 5 * * *"
+  workflow_dispatch:        # lets you run it by hand from the Actions tab
+
+permissions:
+  contents: write           # so the job can commit the CSVs and the dashboard
+  pages: write
+  id-token: write
+
+concurrency:
+  group: meta-ads-daily
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Pull Meta Ads data
+        env:
+          META_APP_ID: ${{ secrets.META_APP_ID }}
+          META_APP_SECRET: ${{ secrets.META_APP_SECRET }}
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          META_AD_ACCOUNT_ID: ${{ secrets.META_AD_ACCOUNT_ID }}
+          META_API_VERSION: ${{ vars.META_API_VERSION || 'v23.0' }}
+        run: python meta_ads.py --days 30
+
+      - name: Check how long the token has left
+        id: token
+        continue-on-error: true
+        env:
+          META_APP_ID: ${{ secrets.META_APP_ID }}
+          META_APP_SECRET: ${{ secrets.META_APP_SECRET }}
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          META_AD_ACCOUNT_ID: ${{ secrets.META_AD_ACCOUNT_ID }}
+        run: python meta_ads.py --token-info
+
+      - name: Open an issue if the token is about to expire
+        if: steps.token.outputs.days_left != '' && fromJSON(steps.token.outputs.days_left) < 7
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const days = '${{ steps.token.outputs.days_left }}';
+            const title = 'Meta access token expires in ' + days + ' days';
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: 'token'
+            });
+            if (existing.data.length) return;
+            await github.rest.issues.create({
+              owner: context.repo.owner, repo: context.repo.repo,
+              title,
+              labels: ['token'],
+              body: [
+                'The Meta access token stored in the `META_ACCESS_TOKEN` secret expires in **' + days + ' days**.',
+                'When it does, this job fails and the dashboard stops updating.',
+                '',
+                'Fix it by following [REFRESH-TOKEN.md](../blob/main/REFRESH-TOKEN.md).',
+                'It takes about two minutes and is done in your browser.',
+                '',
+                '**Do not paste the token into a workflow or an issue.** This repo is public,',
+                'so anything written here or printed in a log can be read by anyone.',
+                '',
+                'Close this issue once the secret is updated.'
+              ].join('\n')
+            });
+
+      - name: Build the dashboard
+        env:
+          TARGET_CPC: ${{ vars.TARGET_CPC || '0.35' }}
+          TARGET_CPR: ${{ vars.TARGET_CPR || '2.00' }}
+          CURRENCY: ${{ vars.CURRENCY || 'USD' }}
+        run: |
+          python build_dashboard.py \
+            --target-cpc "$TARGET_CPC" \
+            --target-cpr "$TARGET_CPR" \
+            --currency "$CURRENCY" \
+            --out public/index.html
+          cp -r data public/data
+
+      - name: Commit the new data and dashboard
+        run: |
+          git config user.name  "meta-ads-bot"
+          git config user.email "actions@github.com"
+          git add -A data public/index.html
+          git diff --staged --quiet || git commit -m "Daily pull $(date -u +%Y-%m-%d)"
+          git push
+
+      - name: Save the dashboard as a downloadable file
+        uses: actions/upload-artifact@v4
+        with:
+          name: dashboard-${{ github.run_number }}
+          path: public/index.html
+          retention-days: 30
+
+      # ---- GitHub Pages (only runs if Pages is switched on for this repo) ----
+      - name: Package for Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
 
